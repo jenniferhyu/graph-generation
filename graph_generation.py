@@ -54,8 +54,6 @@ def diamond_fill(adj_matrix, east_west):
 					# else:
 					# 	adj_matrix[x,y] = 1
 		counter+=1
-	#print(adj_matrix.item((0,0)))
-	#print(adj_matrix)
 
 def hamiltonian(adj_matrix, east_west):
 	"""Fills in the correct Hamiltonian path"""
@@ -84,9 +82,6 @@ def connect_diamond(adj_matrix, east_west):
 				else:
 					if ((i%diamond == 2 or i%diamond == 5) and (j%diamond == 2 or j%diamond == 5)):
 						adj_matrix[i,j] = 1
-	# adj_matrix[vertices-1, 0] = 1
-	# adj_matrix[0, vertices-1] = 1
-	#temporarily commenting the block out because we might not need to return to our start point 
 
 def isolate(adj_matrix, edge_val, east_west):
 	"""Isolates N_1 vertex as proposed in paper
@@ -106,7 +101,6 @@ def isolate(adj_matrix, edge_val, east_west):
 		edge_pairs = permutations(EW, 2)
 	counter = 0
 	for item in edge_pairs:
-		#print(item)
 		x = item[0]
 		y = item[1]
 		if (x//8 != y//8):
@@ -128,7 +122,7 @@ def random_color_assignment(vertices):
 	Rs = "R" * int(vertices//4)
 	Bs = "B" * int(vertices//4)
 	letters = Rs + Bs
-	grab = random.sample(range(vertices), vertices)
+	indices = random.sample(range(vertices), vertices)
 	# while counter < vertices:
 	# 	r = random.randrange(1)
 	# 	if r%2 == 0:
@@ -136,11 +130,11 @@ def random_color_assignment(vertices):
 	# 	else: 
 	# 		random_str+="B"
 	# 	counter+=1
-	for item in grab:
-		random_str += letters[item]
+	for i in indices:
+		random_str += letters[i]
 		if ("RRRR" in random_str) or ("BBBB" in random_str):
 			continue
-		grab -= item
+		grab -= i
 	return not_random
 
 if __name__ == '__main__':	
@@ -167,14 +161,7 @@ if __name__ == '__main__':
 
 	adj_matrix = np.empty(shape=[vertices, vertices])
 	adj_matrix.fill(max_edge_val)
-	# for row in adj_matrix:
-	# 	for elem in row:
-	# 		if elem not in valid_edges:
-	# 			adj_matrix
-	# for i in range(vertices):
-	# 	for j in range(vertices):
-	# 		if adj_matrix.item((i,j)) not in valid_edges:
-	# 			adj_matrix[i,j] = 100
+
 
 	diamond_fill(adj_matrix, east_west)
 	isolate(adj_matrix, edge_val, east_west)
@@ -182,7 +169,7 @@ if __name__ == '__main__':
 	hamiltonian(adj_matrix, east_west)
 	colors = random_color_assignment(vertices)
 	adj_matrix = adj_matrix.astype(int)
-	#print(adj_matrix.item((1,6)))
+
 	with open("1.in", "w") as f:
 		f.write(str(vertices))
 		f.write('\n')
