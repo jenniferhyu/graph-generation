@@ -15,6 +15,14 @@ The diamond's vertices are numbered like so
 
 This is adapated from Papadimitriou, Steiglitz 1978"""
 
+# north = 2
+# south = 5
+# west = 0
+# east = 7
+# sw_mid = 4
+# ne_mid = 3
+# nw_mid = 1
+# se_mid = 6
 
 def diamond_fill(adj_matrix, east_west):
 	"""Fills adjacency matrix with edge weights proposed in paper
@@ -33,8 +41,8 @@ def diamond_fill(adj_matrix, east_west):
 						adj_matrix[x,y] = 0
 					elif (i == east and j == ne_mid) or (i == ne_mid and j == east):
 						adj_matrix[x,y] = 0
-					else:
-						adj_matrix[x,y] = 1
+					#else:
+						#adj_matrix[x,y] = 1
 				else: 
 					if (x == y):
 						adj_matrix[x,y] = 0
@@ -43,11 +51,21 @@ def diamond_fill(adj_matrix, east_west):
 						adj_matrix[x,y] = 0
 					elif (i == south and j == se_mid) or (i == se_mid and j == south):
 						adj_matrix[x,y] = 0
-					else:
-						adj_matrix[x,y] = 1
+					# else:
+					# 	adj_matrix[x,y] = 1
 		counter+=1
 	#print(adj_matrix.item((0,0)))
 	#print(adj_matrix)
+
+def hamiltonian(adj_matrix, east_west):
+	"""Fills in the correct Hamiltonian path"""
+	for i in range(vertices):
+		for j in range(vertices):
+			if (abs(i-j)) == 1:
+				if east_west:
+					if ((i%diamond != 7 or i%diamond != 0) and (j%diamond != 7 or j%diamond != 0)):
+						adj_matrix[i,j] = 1
+
 
 def connect_diamond(adj_matrix, east_west):
 	"""Fills in the adj_matrix for the connection between diamonds
@@ -113,7 +131,7 @@ def random_color_assignment(vertices):
 	return not_random
 
 if __name__ == '__main__':	
-	vertices = 16	
+	vertices = 16
 	diamond = 8 #8 vertices in a diamond
 	k = vertices//diamond #how many diamond circuits we'll have
 
@@ -129,17 +147,28 @@ if __name__ == '__main__':
 	se_mid = 6
 
 	max_edge_val = 100
-	edge_val = int(max_edge_val//2)
 	#max_edge_val = random.randint(90,100,2) #generate random even integer as 2M
+	edge_val = int(max_edge_val//2)
+
+	valid_edges = [0,1,max_edge_val,edge_val]
 
 	adj_matrix = np.empty(shape=[vertices, vertices])
 	adj_matrix.fill(max_edge_val)
+	# for row in adj_matrix:
+	# 	for elem in row:
+	# 		if elem not in valid_edges:
+	# 			adj_matrix
+	# for i in range(vertices):
+	# 	for j in range(vertices):
+	# 		if adj_matrix.item((i,j)) not in valid_edges:
+	# 			adj_matrix[i,j] = 100
 
 	diamond_fill(adj_matrix, east_west)
 	isolate(adj_matrix, edge_val, east_west)
 	connect_diamond(adj_matrix, east_west)
 	colors = random_color_assignment(vertices)
 	adj_matrix = adj_matrix.astype(int)
+	#print(adj_matrix.item((1,6)))
 	with open("1.in", "w") as f:
 		f.write(str(vertices))
 		f.write('\n')
