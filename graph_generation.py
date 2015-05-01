@@ -134,9 +134,9 @@ if __name__ == '__main__':
 	adj_matrix = np.empty(shape=[vertices, vertices])
 	adj_matrix.fill(max_edge_val)
 
-	diamond_fill(adj_matrix,east_west)
-	isolate(adj_matrix)
-	connect_diamond(adj_matrix,east_west)
+	diamond_fill(adj_matrix, east_west)
+	isolate(adj_matrix, east_west)
+	connect_diamond(adj_matrix, east_west)
 	colors = random_color_assignment(vertices)
 	adj_matrix = adj_matrix.astype(int)
 	with open("1.in", "w") as f:
