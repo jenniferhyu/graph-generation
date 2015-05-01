@@ -66,20 +66,29 @@ def connect_diamond(adj_matrix, east_west):
 	# adj_matrix[0, vertices-1] = 1
 	#temporarily commenting the block out because we might not need to return to our start point 
 
-def isolate(adj_matrix, edge_val=50):
+def isolate(adj_matrix, edge_val=50, east_west):
 	"""Isolates N_1 vertex as proposed in paper
 	edge_val is currently set to 50 because we're reserving a bigger integer for other purposes
 	mentioned in the paper but I haven't gotten to it."""
 	N = set([north+8*x for x in range(k)])
 	S = set([south+8*x for x in range(k)])
+	E = set([east+8*x for x in range(k)])
+	W = set([west+8*x for x in range(k)])
 	N_sub = N - {north}
+	E_Sub = E - {east}
 	NS = N_sub.union(S)
-	edge_pairs = permutations(NS,2)
+	EW = E_sub.union(W)
+	if east_west: #that means we're isolating North vertices
+		edge_pairs = permutations(NS, 2)
+	else:
+		edge_pairs = permutations(EW, 2)
 	for item in edge_pairs:
 		#print(item)
 		x = item[0]
 		y = item[1]
-		adj_matrix[x,y] = 0
+		if (x%8 != y%8):
+			adj_matrix[x,y] = 0
+			adj_matrix[y,x] = 0
 	for vertex in NS:
 		adj_matrix[north, vertex] = edge_val
 		adj_matrix[vertex, north] = edge_val
