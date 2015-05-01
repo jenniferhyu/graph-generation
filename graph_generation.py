@@ -123,19 +123,24 @@ def random_color_assignment(vertices):
 	"""Randomly assigns the string of red and blues
 	Might not be necessary as the conditions right now might generate no valid paths"""
 	not_random, random_str = "", ""
-	for i in range(vertices):
-		if i%2==1:
-			not_random+="R"
-		else:
-			not_random+="B"
+	not_random = "RB" * int(vertices//2)
 	counter = 0
-	while counter < vertices:
-		r = random.randrange(1)
-		if r%2 == 0:
-			random_str+="R"
-		else: 
-			random_str+="B"
-		counter+=1
+	Rs = "R" * int(vertices//4)
+	Bs = "B" * int(vertices//4)
+	letters = Rs + Bs
+	grab = random.sample(range(vertices), vertices)
+	# while counter < vertices:
+	# 	r = random.randrange(1)
+	# 	if r%2 == 0:
+	# 		random_str+="R"
+	# 	else: 
+	# 		random_str+="B"
+	# 	counter+=1
+	for item in grab:
+		random_str += letters[item]
+		if ("RRRR" in random_str) or ("BBBB" in random_str):
+			continue
+		grab -= item
 	return not_random
 
 if __name__ == '__main__':	
