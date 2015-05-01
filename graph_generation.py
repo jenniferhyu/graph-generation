@@ -166,6 +166,7 @@ if __name__ == '__main__':
 	diamond_fill(adj_matrix, east_west)
 	isolate(adj_matrix, edge_val, east_west)
 	connect_diamond(adj_matrix, east_west)
+	hamiltonian(adj_matrix, east_west)
 	colors = random_color_assignment(vertices)
 	adj_matrix = adj_matrix.astype(int)
 	#print(adj_matrix.item((1,6)))
