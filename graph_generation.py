@@ -1,6 +1,7 @@
 import numpy as np 
 from itertools import combinations, permutations
 import random
+import time
 
 """		   2
 		/	  \ 
@@ -12,8 +13,7 @@ import random
 	  \         /
 	  	   5 
 The diamond's vertices are numbered like so
-
-This is adapated from Papadimitriou, Steiglitz 1978"""
+"""
 
 # north = 2
 # south = 5
@@ -62,10 +62,14 @@ def hamiltonian(adj_matrix, east_west):
 	for i in range(vertices):
 		for j in range(vertices):
 			if (abs(i-j)) == 1:
-				if east_west:
-					if ((i%diamond != 7 or i%diamond != 0) and (j%diamond != 7 or j%diamond != 0)):
-						adj_matrix[i,j] = 1
-
+					#if ((i%diamond != 7 or i%diamond != 0) and (j%diamond != 7 or j%diamond != 0)):
+						# if (i,j) == (2,1):
+						# 	print("HERE!")
+						# 	time.sleep(5)							
+				adj_matrix[i,j] = 1
+				adj_matrix[j,i] = 1
+	adj_matrix[0, vertices-1] = 1
+	adj_matrix[vertices-1, 0] = 1
 
 def connect_diamond(adj_matrix, east_west):
 	"""Fills in the adj_matrix for the connection between diamonds
@@ -100,13 +104,17 @@ def isolate(adj_matrix, edge_val, east_west):
 		edge_pairs = permutations(NS, 2)
 	else:
 		edge_pairs = permutations(EW, 2)
+	counter = 0
 	for item in edge_pairs:
 		#print(item)
 		x = item[0]
 		y = item[1]
-		if (x%8 != y%8):
+		if (x//8 != y//8):
+			counter+=1
+			#print(item)
 			adj_matrix[x,y] = 0
 			adj_matrix[y,x] = 0
+		#print("Size of edge_pairs: " + str(counter))
 	for vertex in NS:
 		adj_matrix[north, vertex] = edge_val
 		adj_matrix[vertex, north] = edge_val
@@ -179,7 +187,3 @@ if __name__ == '__main__':
 			f.write('\n')
 		f.write(colors)
 	f.close()
-
-"""TODO: Check what the paper means to 'set all the other edges to 2M' (#3) 
-Check about the isolating function. I am not getting (n-2 choose k)-k+1 edges so I'm not sure what the subgraph means
-"""
