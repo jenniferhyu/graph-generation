@@ -66,7 +66,7 @@ def connect_diamond(adj_matrix, east_west):
 	# adj_matrix[0, vertices-1] = 1
 	#temporarily commenting the block out because we might not need to return to our start point 
 
-def isolate(adj_matrix, edge_val=50, east_west):
+def isolate(adj_matrix, edge_val, east_west):
 	"""Isolates N_1 vertex as proposed in paper
 	edge_val is currently set to 50 because we're reserving a bigger integer for other purposes
 	mentioned in the paper but I haven't gotten to it."""
@@ -75,7 +75,7 @@ def isolate(adj_matrix, edge_val=50, east_west):
 	E = set([east+8*x for x in range(k)])
 	W = set([west+8*x for x in range(k)])
 	N_sub = N - {north}
-	E_Sub = E - {east}
+	E_sub = E - {east}
 	NS = N_sub.union(S)
 	EW = E_sub.union(W)
 	if east_west: #that means we're isolating North vertices
@@ -129,13 +129,14 @@ if __name__ == '__main__':
 	se_mid = 6
 
 	max_edge_val = 100
+	edge_val = int(max_edge_val//2)
 	#max_edge_val = random.randint(90,100,2) #generate random even integer as 2M
 
 	adj_matrix = np.empty(shape=[vertices, vertices])
 	adj_matrix.fill(max_edge_val)
 
 	diamond_fill(adj_matrix, east_west)
-	isolate(adj_matrix, east_west)
+	isolate(adj_matrix, edge_val, east_west)
 	connect_diamond(adj_matrix, east_west)
 	colors = random_color_assignment(vertices)
 	adj_matrix = adj_matrix.astype(int)
