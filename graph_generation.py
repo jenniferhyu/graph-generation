@@ -97,8 +97,14 @@ def isolate(adj_matrix, edge_val, east_west):
 	EW = E_sub.union(W)
 	if east_west: #that means we're isolating North vertices
 		edge_pairs = permutations(NS, 2)
+		for vertex in NS:
+			adj_matrix[north, vertex] = edge_val
+			adj_matrix[vertex, north] = edge_val
 	else:
 		edge_pairs = permutations(EW, 2)
+		for vertex in EW:
+			adj_matrix[east,vertex] = edge_val
+			adj_matrix[vertex, east] = edge_val
 	counter = 0
 	for item in edge_pairs:
 		x = item[0]
@@ -109,9 +115,7 @@ def isolate(adj_matrix, edge_val, east_west):
 			adj_matrix[x,y] = 0
 			adj_matrix[y,x] = 0
 		#print("Size of edge_pairs: " + str(counter))
-	for vertex in NS:
-		adj_matrix[north, vertex] = edge_val
-		adj_matrix[vertex, north] = edge_val
+	
 
 def random_color_assignment(vertices):
 	"""Randomly assigns the string of red and blues
@@ -119,26 +123,19 @@ def random_color_assignment(vertices):
 	not_random, random_str = "", ""
 	not_random = "RB" * int(vertices//2)
 	counter = 0
-	Rs = "R" * int(vertices//4)
-	Bs = "B" * int(vertices//4)
+	Rs = "R" * int(vertices//2)
+	Bs = "B" * int(vertices//2)
 	letters = Rs + Bs
 	indices = random.sample(range(vertices), vertices)
-	# while counter < vertices:
-	# 	r = random.randrange(1)
-	# 	if r%2 == 0:
-	# 		random_str+="R"
-	# 	else: 
-	# 		random_str+="B"
-	# 	counter+=1
 	for i in indices:
 		random_str += letters[i]
-		if ("RRRR" in random_str) or ("BBBB" in random_str):
-			continue
-		grab -= i
-	return not_random
+		# if ("RRRR" in random_str) or ("BBBB" in random_str):
+		# 	continue
+		#indices -= i
+	return random_str
 
 if __name__ == '__main__':	
-	vertices = 16
+	vertices = 48
 	diamond = 8 #8 vertices in a diamond
 	k = vertices//diamond #how many diamond circuits we'll have
 
@@ -153,8 +150,8 @@ if __name__ == '__main__':
 	nw_mid = 1
 	se_mid = 6
 
-	max_edge_val = 100
-	#max_edge_val = random.randint(90,100,2) #generate random even integer as 2M
+	#max_edge_val = 100
+	max_edge_val = random.randrange(90,100,2) #generate random even integer as 2M
 	edge_val = int(max_edge_val//2)
 
 	valid_edges = [0,1,max_edge_val,edge_val]
@@ -170,7 +167,7 @@ if __name__ == '__main__':
 	colors = random_color_assignment(vertices)
 	adj_matrix = adj_matrix.astype(int)
 
-	with open("1.in", "w") as f:
+	with open("FindUsOnTinder3.in", "w") as f:
 		f.write(str(vertices))
 		f.write('\n')
 		for row in adj_matrix:
