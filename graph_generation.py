@@ -1,6 +1,7 @@
 import numpy as np 
 from itertools import combinations, permutations
 import random
+import time
 
 """		   2
 		/	  \ 
@@ -12,8 +13,7 @@ import random
 	  \         /
 	  	   5 
 The diamond's vertices are numbered like so
-
-This is adapated from Papadimitriou, Steiglitz 1978"""
+"""
 
 # north = 2
 # south = 5
@@ -54,18 +54,20 @@ def diamond_fill(adj_matrix, east_west):
 					# else:
 					# 	adj_matrix[x,y] = 1
 		counter+=1
-	#print(adj_matrix.item((0,0)))
-	#print(adj_matrix)
 
 def hamiltonian(adj_matrix, east_west):
 	"""Fills in the correct Hamiltonian path"""
 	for i in range(vertices):
 		for j in range(vertices):
 			if (abs(i-j)) == 1:
-				if east_west:
-					if ((i%diamond != 7 or i%diamond != 0) and (j%diamond != 7 or j%diamond != 0)):
-						adj_matrix[i,j] = 1
-
+					#if ((i%diamond != 7 or i%diamond != 0) and (j%diamond != 7 or j%diamond != 0)):
+						# if (i,j) == (2,1):
+						# 	print("HERE!")
+						# 	time.sleep(5)							
+				adj_matrix[i,j] = 1
+				adj_matrix[j,i] = 1
+	adj_matrix[0, vertices-1] = 1
+	adj_matrix[vertices-1, 0] = 1
 
 def connect_diamond(adj_matrix, east_west):
 	"""Fills in the adj_matrix for the connection between diamonds
@@ -80,9 +82,6 @@ def connect_diamond(adj_matrix, east_west):
 				else:
 					if ((i%diamond == 2 or i%diamond == 5) and (j%diamond == 2 or j%diamond == 5)):
 						adj_matrix[i,j] = 1
-	# adj_matrix[vertices-1, 0] = 1
-	# adj_matrix[0, vertices-1] = 1
-	#temporarily commenting the block out because we might not need to return to our start point 
 
 def isolate(adj_matrix, edge_val, east_west):
 	"""Isolates N_1 vertex as proposed in paper
@@ -98,40 +97,45 @@ def isolate(adj_matrix, edge_val, east_west):
 	EW = E_sub.union(W)
 	if east_west: #that means we're isolating North vertices
 		edge_pairs = permutations(NS, 2)
+		for vertex in NS:
+			adj_matrix[north, vertex] = edge_val
+			adj_matrix[vertex, north] = edge_val
 	else:
 		edge_pairs = permutations(EW, 2)
+		for vertex in EW:
+			adj_matrix[east,vertex] = edge_val
+			adj_matrix[vertex, east] = edge_val
+	counter = 0
 	for item in edge_pairs:
-		#print(item)
 		x = item[0]
 		y = item[1]
-		if (x%8 != y%8):
+		if (x//8 != y//8):
+			counter+=1
+			#print(item)
 			adj_matrix[x,y] = 0
 			adj_matrix[y,x] = 0
-	for vertex in NS:
-		adj_matrix[north, vertex] = edge_val
-		adj_matrix[vertex, north] = edge_val
+		#print("Size of edge_pairs: " + str(counter))
+	
 
 def random_color_assignment(vertices):
 	"""Randomly assigns the string of red and blues
 	Might not be necessary as the conditions right now might generate no valid paths"""
 	not_random, random_str = "", ""
-	for i in range(vertices):
-		if i%2==1:
-			not_random+="R"
-		else:
-			not_random+="B"
+	not_random = "RB" * int(vertices//2)
 	counter = 0
-	while counter < vertices:
-		r = random.randrange(1)
-		if r%2 == 0:
-			random_str+="R"
-		else: 
-			random_str+="B"
-		counter+=1
-	return not_random
+	Rs = "R" * int(vertices//2)
+	Bs = "B" * int(vertices//2)
+	letters = Rs + Bs
+	indices = random.sample(range(vertices), vertices)
+	for i in indices:
+		random_str += letters[i]
+		# if ("RRRR" in random_str) or ("BBBB" in random_str):
+		# 	continue
+		#indices -= i
+	return random_str
 
 if __name__ == '__main__':	
-	vertices = 16
+	vertices = 48
 	diamond = 8 #8 vertices in a diamond
 	k = vertices//diamond #how many diamond circuits we'll have
 
@@ -146,22 +150,15 @@ if __name__ == '__main__':
 	nw_mid = 1
 	se_mid = 6
 
-	max_edge_val = 100
-	#max_edge_val = random.randint(90,100,2) #generate random even integer as 2M
+	#max_edge_val = 100
+	max_edge_val = random.randrange(90,100,2) #generate random even integer as 2M
 	edge_val = int(max_edge_val//2)
 
 	valid_edges = [0,1,max_edge_val,edge_val]
 
 	adj_matrix = np.empty(shape=[vertices, vertices])
 	adj_matrix.fill(max_edge_val)
-	# for row in adj_matrix:
-	# 	for elem in row:
-	# 		if elem not in valid_edges:
-	# 			adj_matrix
-	# for i in range(vertices):
-	# 	for j in range(vertices):
-	# 		if adj_matrix.item((i,j)) not in valid_edges:
-	# 			adj_matrix[i,j] = 100
+
 
 	diamond_fill(adj_matrix, east_west)
 	isolate(adj_matrix, edge_val, east_west)
@@ -169,8 +166,8 @@ if __name__ == '__main__':
 	hamiltonian(adj_matrix, east_west)
 	colors = random_color_assignment(vertices)
 	adj_matrix = adj_matrix.astype(int)
-	#print(adj_matrix.item((1,6)))
-	with open("1.in", "w") as f:
+
+	with open("FindUsOnTinder3.in", "w") as f:
 		f.write(str(vertices))
 		f.write('\n')
 		for row in adj_matrix:
@@ -179,7 +176,3 @@ if __name__ == '__main__':
 			f.write('\n')
 		f.write(colors)
 	f.close()
-
-"""TODO: Check what the paper means to 'set all the other edges to 2M' (#3) 
-Check about the isolating function. I am not getting (n-2 choose k)-k+1 edges so I'm not sure what the subgraph means
-"""
