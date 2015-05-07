@@ -1,0 +1,22 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{enumerate}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\begin{document}
+
+\title{Programming Project Writeup}
+
+\maketitle
+
+\begin{enumerate}
+\item FindUsOnTinder
+\item cs170-jp
+\item Kay Toma, Laura Harker, Anna Pham, Jennifer Yu
+\item Our general approach was to modify the Lin-Kernighan algorithm as it was stated to be one of the best algorithms to solve the Euclidean Traveling Salesman problem. We used the 2-opt version and ... We generate a psuedo-random path and improve our solution from there. We also looked for valid paths in terms of coloring pattern RB, RRBB, and RRRBBB. 
+\item Our general approach was following a paper we found online. We first created a Hamiltonian path in the form of a diamond circuit. The diamond circuit could have two paths--north to south and east to west. We could either choose east-west or north-south as the ``true'' path and we hoped to trick algorithms into traveling the north-south path because it was sometimes inexpensive but overall very costly. If anybody tried to run a local-search or a greedy algorithm to solve the graph, they would end with a very 
+\item We use paths.py as a library. The bulk of the work can be run on 23opt.py. Running ``python 23opt.py'' on the command line will solve all 495 instances. 
+\item We used the 1978 paper titled ``Some Examples of Difficult Traveling Salesman Problems'' by Papadimitriou and Steiglitz. 
+\end{enumerate}
